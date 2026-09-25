@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+
+    <title>Cementing Accessories</title>
+</head>
+
+<body>
+
+    <header>
+        <h1>Bem-vindo ao Cementing Accessories</h1>
+        <p class="intro-text">Seu banco de dados de acessórios de cimentação!</p>
+    </header>
+    
+    <main>
+        <!-- Aí o botão de criar amarelo fica embaixo ocupando toda largura -->
+        <div class="main-container">
+            <div class="main-nav">
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li class="nav-item">Usuários</li>
+                        <li class="nav-item">Poços</li>
+                        <li class="nav-item">Acessórios</li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="main-create">
+                <button class="btn-create" id="createButton" type="button">Criar</button>
+            </div>
+            <div class="main-content">
+                <h2 id="object">Acessórios</h2>
+                <section class="form-section" id="formSection" hidden>
+                    <!-- <h3 id="formTitle">Novo acessório</h3> -->
+                    <form id="resourceForm"></form>
+                </section>
+                <ul class="item-list" id="mainList">
+                    <!-- Itens da lista vão aparecer aqui -->
+                </ul>
+                <section class="details" id="detailsSection" hidden="true">
+                    <h3 class="detailsTitle" id="detailsTitle">Detalhes</h3>
+                    <button class="btn-primary" id="updateButton" type="button">Atualizar</button>
+                    <button class="btn-primary" id="analyzeButton" type="button">Analisar</button>
+                    <dl class="details-text" id="detailsText"></dl>
+                </section>
+            </div>
+                <!-- Listar vai ser no nav acima -->
+                <!-- Ver detalhes vai ser clicando no item da lista -->
+                <!-- Nos detalhes de usuário, poço e acessórios poderemos associá-los entre si -->
+                <!-- Atualizar vai ser clicando em imagem à direita do item da lista -->
+                <!-- Deletar vai ser clicando em imagem à direita do atualizar -->
+                <!-- Para usuários e poços, imagem para associar acessórios -->
+                <!-- Se necessário, já criar as seções escondidas e habilitar com js -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p class="footer-text">Página em desenvolvimento</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+
+</html>
