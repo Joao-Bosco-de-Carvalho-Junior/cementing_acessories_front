@@ -1,5 +1,29 @@
-header {
-    background-color: #006298;
+:root {
+    --blue: #006298;
+    --blue-dark: #005080;
+    --green: #007f3f;
+    --yellow: #ebff50;
+    --yellow-dark: #c4d600;
+    --create-yellow: #ffc632;
+    --text: #1a1a1a;
+    --surface: #ffffff;
+    --surface-hover: #e6e6e6;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.site-header {
+    background-color: var(--blue);
     padding: 20px;
     text-align: center;
     color: white;
@@ -12,7 +36,7 @@ header {
 }
 
 main {
-    background-color: rgb(235, 255, 80);
+    background-color: var(--yellow);
 }
 
 .main-container {
@@ -20,44 +44,51 @@ main {
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    align-items: flex-start;
 }
 
 .main-nav {
     width: 100%;
-    padding: 10px 0px 0px 0px;
-    background-color: rgb(196, 214, 0);
+    padding-top: 10px;
+    background-color: var(--yellow-dark);
     position: sticky;
     top: 0;
+    z-index: 1;
 }
 
 .nav-list {
+    display: flex;
+    justify-content: center;
     gap: 30px;
     padding: 0;
     margin: 0;
-}
-
-.nav-list li {
-    margin-bottom: 10px;
-    text-align: center;
     list-style: none;
 }
 
-.nav-list li:hover {
-    background-color: #e6e6e6;
-    font-weight: bold;
+.nav-item {
+    padding: 10px 12px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
     cursor: pointer;
 }
 
-.main-create {
+.nav-item:hover,
+.nav-item:focus-visible {
+    background-color: var(--surface-hover);
+    font-weight: bold;
+}
+
+.main-create,
+.main-content {
     width: 100%;
 }
 
 .btn-create {
-    background-color: #ffc632;
+    background-color: var(--create-yellow);
     width: 100%;
     border: none;
-    color: #1a1a1a;
+    color: var(--text);
     padding: 10px 20px;
     font-size: 14px;
     cursor: pointer;
@@ -70,23 +101,25 @@ main {
     background-color: #f9d780;
 }
 
+.btn-create,
 .btn-primary {
-    background-color: #006298;
     border: none;
+    font: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--blue);
     color: white;
     padding: 10px 20px;
-    font-size: 14px;
-    cursor: pointer;
     margin-bottom: 20px;
-    font-weight: bold;
 }
 
-.btn-primary:hover {
-    background-color: #005080;
-}
-
-.main-content {
-    width: 100%;
+.btn-primary:hover,
+.btn-primary:focus-visible {
+    background-color: var(--blue-dark);
 }
 
 .item-list {
@@ -98,17 +131,18 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #ffffff;
-    color: #1a1a1a;
+    background-color: var(--surface);
+    color: var(--text);
     padding: 10px;
     margin-bottom: 10px;
     margin-right: 10px;
-    border-left: 4px solid #007f3f;
+    border-left: 4px solid var(--green);
     text-align: left;
 }
 
-.item-list li:hover {
-    background-color: #e6e6e6;
+.item-list li:hover,
+.item-list li:focus-visible {
+    background-color: var(--surface-hover);
     font-weight: bold;
     cursor: pointer;
 }
@@ -126,18 +160,18 @@ main {
 }
 
 .details {
-    background-color: #ffffff;
+    background-color: var(--surface);
     padding: 10px;
     margin-bottom: 10px;
     margin-right: 10px;
-    border-left: 4px solid #007f3f;
+    border-left: 4px solid var(--green);
 }
 
 .form-section {
-    background-color: #ffffff;
+    background-color: var(--surface);
     padding: 10px;
     margin: 0 10px 10px 0;
-    border-left: 4px solid #006298;
+    border-left: 4px solid var(--blue);
 }
 
 .form-field {
@@ -167,7 +201,7 @@ main {
     white-space: pre-line;
 }
 
-.details-title {
+.detailsTitle {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 5px;
@@ -178,7 +212,7 @@ main {
 }
 
 .footer {
-    background-color: #007f3f;
+    background-color: var(--green);
     padding: 20px;
     text-align: center;
 }

@@ -10,49 +10,38 @@
 
 <body>
 
-    <header>
+    <header class="site-header">
         <h1>Bem-vindo ao Cementing Accessories</h1>
         <p class="intro-text">Seu banco de dados de acessórios de cimentação!</p>
     </header>
     
     <main>
-        <!-- Aí o botão de criar amarelo fica embaixo ocupando toda largura -->
         <div class="main-container">
-            <div class="main-nav">
-                <nav class="nav">
+            <nav class="main-nav" aria-label="Recursos">
                     <ul class="nav-list">
-                        <li class="nav-item">Usuários</li>
-                        <li class="nav-item">Poços</li>
-                        <li class="nav-item">Acessórios</li>
+                        <li><button class="nav-item" type="button">Usuários</button></li>
+                        <li><button class="nav-item" type="button">Poços</button></li>
+                        <li><button class="nav-item" type="button">Acessórios</button></li>
                     </ul>
-                </nav>
-            </div>
+            </nav>
             <div class="main-create">
                 <button class="btn-create" id="createButton" type="button">Criar</button>
             </div>
             <div class="main-content">
                 <h2 id="object">Acessórios</h2>
                 <section class="form-section" id="formSection" hidden>
-                    <!-- <h3 id="formTitle">Novo acessório</h3> -->
-                    <form id="resourceForm"></form>
+                        <form id="resourceForm"></form>
                 </section>
                 <ul class="item-list" id="mainList">
                     <!-- Itens da lista vão aparecer aqui -->
                 </ul>
-                <section class="details" id="detailsSection" hidden="true">
+                <section class="details" id="detailsSection" hidden>
                     <h3 class="detailsTitle" id="detailsTitle">Detalhes</h3>
                     <button class="btn-primary" id="updateButton" type="button">Atualizar</button>
                     <button class="btn-primary" id="analyzeButton" type="button">Analisar</button>
                     <dl class="details-text" id="detailsText"></dl>
                 </section>
             </div>
-                <!-- Listar vai ser no nav acima -->
-                <!-- Ver detalhes vai ser clicando no item da lista -->
-                <!-- Nos detalhes de usuário, poço e acessórios poderemos associá-los entre si -->
-                <!-- Atualizar vai ser clicando em imagem à direita do item da lista -->
-                <!-- Deletar vai ser clicando em imagem à direita do atualizar -->
-                <!-- Para usuários e poços, imagem para associar acessórios -->
-                <!-- Se necessário, já criar as seções escondidas e habilitar com js -->
         </div>
     </main>
 
@@ -60,7 +49,7 @@
         <p class="footer-text">Página em desenvolvimento</p>
     </footer>
 
-    <script src="scripts.js"></script>
+    <script src="scripts.js" defer></script>
 </body>
 
 </html>

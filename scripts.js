@@ -1,33 +1,37 @@
 /* TO DO
 
-ESSENCIAL:
-Revisar tudo
-Commit GitHub
-
 EXTRAS:
-Lista de objetos serem clicáveis
+Lista de objetos dentro de detalhes serem clicáveis
 Commit GitHub
 Pegar última análise e ver status aprovação
 Commit GitHub
 Botão ir e voltar e histórico
 Commit GitHub
-Login
+Login de usuários
 Commit GitHub
-Modal
+Modal de confirmação
 Commit GitHub
-Toasts
+Toasts avisos
 Commit GitHub 
-Card
+Card em acessórios
 
 
 */
 
+/*
+  --------------------------------------------------------------------------------------
+  Mapeamento de objetos
+  --------------------------------------------------------------------------------------
+*/
+
+//Mapeamento de listagem de objetos
 const objectListMapping = {
   "Usuários": "users",
   "Poços": "wells",
   "Acessórios": "accessories"
 };
 
+//Mapeamento de objetos individuais
 const objectMapping = {
   "Usuários": "user",
   "Poços": "well",
@@ -38,7 +42,7 @@ const objectMapping = {
 
 /*
   --------------------------------------------------------------------------------------
-  Função para obter a lista de acessórios existente do servidor via requisição GET
+  Navegação e carregamento das listas
   --------------------------------------------------------------------------------------
 */
 
@@ -47,49 +51,72 @@ const ListElement = () => {
   let i;
   for (i = 0; i < lis.length; i++) {
     lis[i].onclick = function () {
-      document.getElementById('object').textContent = this.textContent
-      getObjectList();
-      document.getElementById('mainList').replaceChildren();
-      document.getElementById('mainList').hidden = false;
-      document.getElementById('formSection').hidden = true;
-      document.getElementById('detailsSection').hidden = true;
-    }
+      getObjectList(this.textContent);
+    };
   }
-}
+};
 
-const getObjectList = async () => {
-  objectType = document.getElementById('object').textContent
-  let url = `http://127.0.0.1:5000/${objectListMapping[objectType]}`;
+const getObjectList = async (objectType = document.getElementById('object').textContent) => {
+  const url = `http://127.0.0.1:5000/${objectListMapping[objectType]}`;
   fetch(url, {
     method: 'get',
   })
     .then((response) => response.json())
     .then((data) => {
+      const listItems = document.createDocumentFragment();
       data[objectListMapping[objectType]].forEach(item => {
-          insertObjectList(item)
-      })
+        insertObjectList(item, listItems);
+      });
+      document.getElementById('object').textContent = objectType;
+      document.getElementById('mainList').replaceChildren(listItems);
+      document.getElementById('mainList').hidden = false;
+      document.getElementById('formSection').hidden = true;
+      document.getElementById('detailsSection').hidden = true;
+      removeElement();
+      viewElement();
     })
     .catch((error) => {
       console.error('Error:', error);
     });
+};
+
+
+const insertObjectList = (item, list = document.getElementById('mainList')) => {
+  var li = document.createElement('li');
+  list.appendChild(li);
+  let objectType = document.getElementById('object').textContent;
+  if (objectType === "Acessórios") {
+    li.textContent = `${item.name} do tipo ${item.type} da ${item.manufacturer}. NM: ${item.id}`
+    li.id = item.id; 
+  }
+  else {
+    li.textContent = item.name;
+    li.id = item.id; 
+  }
+  
+  li.className = "item";
+
+  insertButton(li)
 }
 
+const viewElement = () => {
+  let lis = document.getElementsByClassName("item");
+  let i;
+  for (i = 0; i < lis.length; i++) {
+    lis[i].onclick = function () {
+      getObject(this.id);
+    }
+  }
+}
 
 /*
   --------------------------------------------------------------------------------------
-  Chamada da função para carregamento inicial dos dados
-  --------------------------------------------------------------------------------------
-*/
-getObjectList()
-ListElement();
-
-/*
-  --------------------------------------------------------------------------------------
-  Função para post do acessório
+  Formulários
   --------------------------------------------------------------------------------------
 */
 
-// Campos do formulário de acessório BASE. Para cada específico, criar cópia com campos extras
+
+// Campos usados na criação e edição de cada tipo de recurso.
 const accessoryFields = [
   'accessory_type',
   'casing_size',
@@ -103,7 +130,7 @@ const centralizerFields = accessoryFields.concat([
   'restoring_force',
   'running_force',
   'type',
-  'well_id'
+  'well_diameter'
 ]);
 
 const userAndWellFields = [
@@ -132,6 +159,7 @@ const objectFormMapping = {
   "Analisar Poços": wellUseAccessoryFields
 };
 
+// Formatação e renderização dos dados de formulário e detalhes
 const formatFieldName = (fieldName) => fieldName.replace(/_/g, ' ');
 
 const formatFieldValue = (value) => {
@@ -192,9 +220,8 @@ const showObjectForm = (editingObject = null) => {
     form.appendChild(idInput);
   }
 
-  //POLIMORFIMO BASEADO NO accessory_type (pedir esse valor primeiro?)
-  objectType = document.getElementById('object').textContent
-  objectFields = objectFormMapping[objectType];
+  const objectType = document.getElementById('object').textContent;
+  const objectFields = objectFormMapping[objectType];
   objectFields.forEach((fieldName) => {
     const field = document.createElement('div');
     const label = document.createElement('label');
@@ -238,15 +265,15 @@ const showObjectForm = (editingObject = null) => {
   document.getElementById('mainList').hidden = true;
 }
 
-//SERÁ QUE CONSIGO POLIMORFISMO AQUI? ACHO QUE NÃO, CRIAR PARA CADA OBJETO E CONSOLIDAR NO create()
-//NA VERDADE, ACHO QUE CONSIGO APROVEITAR TUDO EXCETO A PARTIR DE data.accessories.forEach(...)
-//PARA O LINK, GERAR A PARTIR DE #object (fazer dicionário de mapeamento português-inglês)
+/*
+  --------------------------------------------------------------------------------------
+  Criação e atualização de objetos
+  --------------------------------------------------------------------------------------
+*/
 const createObject = (event) => {
   event.preventDefault();
   const objectType = document.getElementById('object').textContent
   const form = event.currentTarget;
-  //const object = Object.fromEntries(new FormData(form).entries());
-
   fetch(`http://127.0.0.1:5000/${objectMapping[objectType]}`, {
     method: 'post',
     body: new FormData(form)
@@ -271,18 +298,34 @@ const createObject = (event) => {
     .catch((error) => console.error('Error:', error));
 }
 
-document.getElementById('createButton').addEventListener('click', () => showObjectForm());
-
+const updateObject = (event) => {
+  event.preventDefault();
+  const objectType = document.getElementById('object').textContent
+  const form = event.currentTarget;
+  fetch(`http://127.0.0.1:5000/${objectMapping[objectType]}` , {
+    method: 'PATCH',
+    body: new FormData(form)
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      form.reset();
+      document.getElementById('formSection').hidden = true;
+      console.log('Updated object:', data.name, data.id);
+      getObject(data.id)
+    })
+    .catch((error) => console.error('Error:', error));
+}
 
 /*
   --------------------------------------------------------------------------------------
-  Função para ver um item da lista de acordo com o click no item
+  Visualização de objetos
   --------------------------------------------------------------------------------------
 */
 
-
+// Detalhes do recurso selecionado
 const insertObject = (object) => {
   console.log('Inserting object:', object.name, object.id);
+  const objectType = document.getElementById('object').textContent;
   let title = document.getElementById('detailsTitle');
   title.textContent = object.name;
   let detailsText = document.getElementById('detailsText');
@@ -292,6 +335,7 @@ const insertObject = (object) => {
     showObjectForm(object);
   };
   let analyzeButton = document.getElementById('analyzeButton');
+  analyzeButton.hidden = objectType === 'Usuários';
   analyzeButton.onclick = function() {
     let ele = document.getElementById('object')
     ele.textContent = 'Analisar ' + ele.textContent;
@@ -317,28 +361,15 @@ const getObject = (id) => {
 }
 
 
-const viewElement = () => {
-  let lis = document.getElementsByClassName("item");
-  let i;
-  for (i = 0; i < lis.length; i++) {
-    lis[i].onclick = function () {
-      getObject(this.id);
-    }
-  }
-}
-
 /*
   --------------------------------------------------------------------------------------
-  Função para associar um acessório a um poço ou usuário
+  Associação Poço-Acessório e Usuário-Acessório
   --------------------------------------------------------------------------------------
 */
-
 const analyzeObject = (event) => {
   event.preventDefault();
   const objectType = document.getElementById('object').textContent
   const form = event.currentTarget;
-  //const object = Object.fromEntries(new FormData(form).entries());
-
   fetch(`http://127.0.0.1:5000/${objectMapping[objectType]}` , {
     method: 'PATCH',
     body: new FormData(form)
@@ -352,34 +383,13 @@ const analyzeObject = (event) => {
     })
     .catch((error) => console.error('Error:', error));
 }
-
-const updateObject = (event) => {
-  event.preventDefault();
-  const objectType = document.getElementById('object').textContent
-  const form = event.currentTarget;
-  //const object = Object.fromEntries(new FormData(form).entries());
-
-  fetch(`http://127.0.0.1:5000/${objectMapping[objectType]}` , {
-    method: 'PATCH',
-    body: new FormData(form)
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      form.reset();
-      document.getElementById('formSection').hidden = true;
-      console.log('Updated object:', data.name, data.id);
-      getObject(data.id)
-    })
-    .catch((error) => console.error('Error:', error));
-}
-
-
 
 /*
   --------------------------------------------------------------------------------------
-  Função para criar um botão close para cada item da lista
+  Deleção de itens dos objetos
   --------------------------------------------------------------------------------------
 */
+
 const insertButton = (parent) => {
   let span = document.createElement("span");
   let txt = document.createTextNode(" \u00D7");
@@ -388,14 +398,8 @@ const insertButton = (parent) => {
   parent.appendChild(span);
 }
 
-/*
-  --------------------------------------------------------------------------------------
-  Função para remover um item da lista de acordo com o click no botão close
-  --------------------------------------------------------------------------------------
-*/
 const removeElement = () => {
   let close = document.getElementsByClassName("close");
-  // var table = document.getElementById('myTable');
   let i;
   for (i = 0; i < close.length; i++) {
     close[i].onclick = async function (event) {
@@ -416,11 +420,6 @@ const removeElement = () => {
   }
 }
 
-/*
-  --------------------------------------------------------------------------------------
-  Função para deletar um item da lista do servidor via requisição DELETE
-  --------------------------------------------------------------------------------------
-*/
 const deleteItem = (item) => {
   let objectType = document.getElementById('object').textContent;
   let url = `http://127.0.0.1:5000/${objectMapping[objectType]}?id=` + item;
@@ -438,27 +437,11 @@ const deleteItem = (item) => {
 
 /*
   --------------------------------------------------------------------------------------
-  Função para inserir items na lista apresentada
+  Inicialização após o registro de funções e manipuladores.
   --------------------------------------------------------------------------------------
 */
-const insertObjectList = (item) => {
-  var list = document.getElementById('mainList');
-  var li = document.createElement('li');
-  list.appendChild(li);
-  let objectType = document.getElementById('object').textContent;
-  if (objectType === "Acessórios") {
-    li.textContent = `${item.name} do tipo ${item.type} da ${item.manufacturer}. NM: ${item.id}`
-    li.id = item.id; 
-  }
-  else {
-    li.textContent = item.name;
-    li.id = item.id; 
-  }
-  
-  li.className = "item";
 
-  insertButton(li)
 
-  removeElement()
-  viewElement()
-}
+document.getElementById('createButton').addEventListener('click', () => showObjectForm());
+ListElement();
+getObjectList();
